@@ -3,8 +3,13 @@
 import click
 from crossplane.function import logging, runtime
 
-from function import fn
+#from function import fn
+import fn
 
+funcdict = {
+    'default': fn.FunctionRunner,
+    'another': fn.AnotherFunctionRunner,
+}
 
 @click.command()
 @click.option(
@@ -30,22 +35,28 @@ from function import fn
     help="Run without mTLS credentials. "
     "If you supply this flag --tls-certs-dir will be ignored.",
 )
-def cli(debug: bool, address: str, tls_certs_dir: str, insecure: bool) -> None:  # noqa:FBT001  # We only expect callers via the CLI.
+@click.option(
+    "--function",
+    default="default",
+    help="Pick a function to run",
+)
+def cli(debug: bool, address: str, tls_certs_dir: str, insecure: bool, function: str) -> None:  # noqa:FBT001  # We only expect callers via the CLI.
     """A Crossplane composition function."""
     try:
         level = logging.Level.INFO
         if debug:
             level = logging.Level.DEBUG
+        
         logging.configure(level=level)
         runtime.serve(
-            fn.FunctionRunner(),
+            funcdict[function](),
+            #fn.FunctionRunner(),
             address,
             creds=runtime.load_credentials(tls_certs_dir),
             insecure=insecure,
         )
     except Exception as e:
         click.echo(f"Cannot run function: {e}")
-
 
 if __name__ == "__main__":
     cli()

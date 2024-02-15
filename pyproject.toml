@@ -22,7 +22,8 @@ dependencies = [
   # package (e.g. a wheel), confirm that run_function_pb2.pyi is installed. This
   # interface file makes working with RunFunctionRequest and RunFunctionResponse
   # a lot easier, since it contains all the type metadata.
-  "function-sdk-python @ git+https://github.com/crossplane/function-sdk-python",
+  #"function-sdk-python @ git+https://github.com/crossplane/function-sdk-python",
+  "function-sdk-python @ git+https://github.com/joelddiaz/function-sdk-python@fix-build",
 
   # Pin at least the things we import directly.
   "click==8.1.7",
@@ -45,6 +46,9 @@ source = "vcs"
 
 [tool.hatch.metadata]
 allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["function"]
 
 [tool.hatch.envs.default]
 type = "virtual"
